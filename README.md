@@ -17,12 +17,10 @@ git clone --recurse-submodules https://github.com/MSProyectoWeb/MS_Gym.git
 
 En cada directorio de microservicio, ejecutar:
 ```bash
-npm install
-```
-
-**Nota**: Si encuentras errores, intenta:
-```bash
 npm install --legacy-peer-deps
+```
+```bash
+npm install @nestjs/config --legacy-peer-deps
 ```
 
 ### 3. Configurar Variables de Entorno
@@ -55,7 +53,7 @@ RABBITMQ_QUEUE=users_queue
 
 Levantar base de datos y RabbitMQ:
 ```bash
-docker-compose up -d
+docker-compose -f docker-compose.dev.yml up -d
 ```
 
 ### 5. Configurar Prisma
