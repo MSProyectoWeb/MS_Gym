@@ -22,7 +22,10 @@ npm install --legacy-peer-deps
 ```bash
 npm install @nestjs/config --legacy-peer-deps
 ```
-
+Solo en el Servicio api-gateway ejecutar el siguiente comando es para el JWT:
+```bash
+npm install @nestjs/passport passport passport-jwt @nestjs/jwt --force or --legacy-peer-deps
+```
 ### 3. Configurar Variables de Entorno
 
 #### API Gateway
