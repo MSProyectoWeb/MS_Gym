@@ -69,6 +69,10 @@ npx prisma generate
 ```bash
 npx prisma migrate dev
 ```
+3. Ejecutar datos semilla:
+```bash
+npx prisma db seed
+```
 
 ### 6. Iniciar los Microservicios
 
