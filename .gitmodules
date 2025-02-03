@@ -1,0 +1,12 @@
+[submodule "cliente"]
+	path = cliente
+	url = https://github.com/MSProyectoWeb/Chat_client.git
+[submodule "services/api-gateway"]
+	path = services/api-gateway
+	url = https://github.com/MSProyectoWeb/Api_gateway.git
+[submodule "services/chat"]
+	path = services/chat
+	url = https://github.com/MSProyectoWeb/Chat_service.git
+[submodule "services/users"]
+	path = services/users
+	url = https://github.com/MSProyectoWeb/Users_service.git

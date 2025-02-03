@@ -1,0 +1,109 @@
+version: '3.8'
+
+services:
+  # Base de datos PostgreSQL para Users
+  db_users:
+    image: postgres:15
+    container_name: db_users
+    restart: always
+    environment:
+      POSTGRES_USER: users_admin
+      POSTGRES_PASSWORD: users_password
+      POSTGRES_DB: users_db
+    ports:
+      - "5433:5432"
+    volumes:
+      - db_users_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U users_admin -d users_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - production_network
+
+  # RabbitMQ para la comunicación entre microservicios
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    restart: always
+    environment:
+      RABBITMQ_DEFAULT_USER: user
+      RABBITMQ_DEFAULT_PASS: password
+    ports:
+      - "5672:5672"   # Puerto AMQP para los microservicios
+      - "15672:15672" # Interfaz web de RabbitMQ
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - production_network
+    
+
+  # Servicio de Users
+  users:
+    build: ./services/users
+    container_name: users_service
+    restart: always
+    environment:
+      DATABASE_URL: "postgresql://users_admin:users_password@db_users:5432/users_db?schema=public"
+      MAIL_USER: gymappgestion@gmail.com
+      MAIL_PASS: vuzp sguz kkxh ufub
+      RABBITMQ_USER: user
+      RABBITMQ_PASS: password
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_QUEUE: users_queue
+    depends_on:
+      db_users:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - production_network
+
+  # Servicio de Chat
+  chat:
+    build: ./services/chat
+    container_name: chat_service
+    restart: always
+    environment:
+      RABBITMQ_USER: user
+      RABBITMQ_PASS: password
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_QUEUE: chat_queue
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - production_network
+
+
+  # API Gateway
+  api-gateway:
+    build: ./services/api-gateway
+    container_name: api_gateway
+    restart: always
+    ports:
+      - "3000:3000"
+    depends_on:
+      users:
+        condition: service_started
+      chat:
+        condition: service_started
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - production_network
+
+volumes:
+  db_users_data:
+  rabbitmq_data:
+
+networks:
+  production_network:
+    driver: bridge
+    

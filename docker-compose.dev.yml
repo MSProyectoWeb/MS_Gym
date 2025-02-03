@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  # Base de Datos PostgreSQL para Users
+  db_users:
+    image: postgres:15
+    container_name: db_users
+    restart: always
+    environment:
+      POSTGRES_USER: users_admin
+      POSTGRES_PASSWORD: users_password
+      POSTGRES_DB: users_db
+    ports:
+      - "5433:5432"  # Mapea el puerto 5433 en la máquina local al 5432 del contenedor
+    volumes:
+      - db_users_data:/var/lib/postgresql/data
+    networks:
+      - dev_network
+
+  # RabbitMQ para la comunicación entre servicios
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    restart: always
+    environment:
+      RABBITMQ_DEFAULT_USER: user
+      RABBITMQ_DEFAULT_PASS: password
+    ports:
+      - "5672:5672"   # Puerto de RabbitMQ
+      - "15672:15672" # Interfaz web de RabbitMQ
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - dev_network
+
+volumes:
+  db_users_data:
+  rabbitmq_data:
+
+networks:
+  dev_network:
+    driver: bridge
