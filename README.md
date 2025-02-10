@@ -59,7 +59,7 @@ Levantar base de datos y RabbitMQ:
 docker-compose -f docker-compose.dev.yml up -d
 ```
 
-### 5. Configurar Prisma
+### 5. Configurar Prisma (Solo para el servicio de User)
 
 Ejecutar en orden:
 
